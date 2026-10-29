@@ -1,0 +1,8 @@
+data/
+*.gdf
+*.mat
+results/
+__pycache__/
+*.pyc
+.env/
+venv/

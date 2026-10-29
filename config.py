@@ -1,0 +1,21 @@
+SUBJECTS = ['A01','A02','A03','A04','A05','A06','A07','A08','A09']
+
+BANDPASS_LOW  = 8.0
+BANDPASS_HIGH = 30.0
+FILTER_ORDER  = 3
+SFREQ = 250
+
+BASELINE_START = 3.0
+BASELINE_END   = 6.0
+
+WIN_WIDTH  = 3.0
+WIN_STARTS = [round(s * 0.1 + 2.0, 1) for s in range(16)]
+
+N_CSP_COMPONENTS = 4
+
+EVENT_ID = {769: 1, 770: 2, 771: 3, 772: 4}
+CLASS_NAMES = {1: 'Left Hand', 2: 'Right Hand', 3: 'Feet', 4: 'Tongue'}
+
+ARTIFACT_CODE = 1023
+ALPHA = 0.05
+RANDOM_SEED = 42
