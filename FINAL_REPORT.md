@@ -72,7 +72,28 @@ The early-window condition therefore achieved a statistically significant
 subject-level improvement over the baseline window in this operational
 comparison.
 
-## 5. Relation to the referenced paper
+## 5. Confusion-matrix metrics
+
+The predictions from both conditions were used to create four-class confusion
+matrices for every subject. Sensitivity and recall are equivalent here because
+they are calculated as macro-averaged one-vs-rest recall across the four
+classes. Specificity is also macro-averaged one-vs-rest specificity. F1 is the
+macro F1 score, and kappa is Cohen's kappa.
+
+| Condition | Accuracy | Sensitivity / Recall | Specificity | F1 | Kappa |
+|---|---:|---:|---:|---:|---:|
+| Without visual cue | 42.66% | 42.83% | 80.91% | 40.57% | 0.2364 |
+| With visual cue | 58.29% | 58.30% | 86.09% | 56.16% | 0.4434 |
+
+These are means across the nine subject-level scores. The aggregate
+four-class confusion matrices are shown in
+[`results/confusion_matrices_aggregate.png`](./results/confusion_matrices_aggregate.png).
+Machine-readable outputs are available in
+[`results/classification_metrics_all.csv`](./results/classification_metrics_all.csv),
+[`results/classification_metrics_summary.csv`](./results/classification_metrics_summary.csv),
+and [`results/confusion_matrices_aggregate.csv`](./results/confusion_matrices_aggregate.csv).
+
+## 6. Relation to the referenced paper
 
 The study is conceptually related to:
 
@@ -87,7 +108,7 @@ uses a different FBCSP + LDA implementation and an operational window proxy.
 Thus, the percentages above should not be presented as an exact replication
 or a direct numerical reproduction of the paper.
 
-## 6. Limitations and future work
+## 7. Limitations and future work
 
 - The current dataset has no separate matched no-cue recording.
 - The label “with visual cue” refers to the earlier 2–5 s operational window,
