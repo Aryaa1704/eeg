@@ -27,9 +27,13 @@ BAND_SETS = {
     "mu_only": [(8.0, 12.0)],
     "beta": [(12.0, 30.0)],
 }
-WINDOWS = [2.0, 2.5, 3.0]
-COMPONENTS = [4, 6]
-CLASSIFIERS = ["LDA", "SVM"]
+WINDOWS = [float(value) for value in os.getenv(
+    "OPTIMIZED_WINDOWS", "2.0,2.5,3.0"
+).split(",")]
+COMPONENTS = [int(value) for value in os.getenv(
+    "OPTIMIZED_COMPONENTS", "4,6"
+).split(",")]
+CLASSIFIERS = os.getenv("OPTIMIZED_MODELS", "LDA,SVM").split(",")
 
 
 def bandpass(raw, low, high):
