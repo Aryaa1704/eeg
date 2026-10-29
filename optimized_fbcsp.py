@@ -155,7 +155,7 @@ def run_subject(subject):
                         "train_epochs": len(y_train),
                         "test_epochs": len(y_test),
                     })
-            del train_raw, test_raw, train_bands, test_bands
+            del train_bands, test_bands
             gc.collect()
     return rows
 
