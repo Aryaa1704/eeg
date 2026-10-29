@@ -1,7 +1,9 @@
 data/
 *.gdf
 *.mat
-results/
+results/*
+!results/paper_replication/
+!results/paper_replication/**
 __pycache__/
 *.pyc
 .env/
