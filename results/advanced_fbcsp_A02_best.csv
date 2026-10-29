@@ -1,0 +1,2 @@
+subject,window_start,window_end,components,classifier,cv_accuracy,test_accuracy,train_epochs,test_epochs
+A02,2.0,5.0,4,LDA,0.6597222222222222,0.6466431095406361,288,283

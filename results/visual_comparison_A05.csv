@@ -1,0 +1,3 @@
+subject,condition,accuracy,window_start,window_end,train_epochs,test_epochs,band_hz
+A05,without_visual_cue,0.2967032967032967,3.0,6.0,284,273,8-30_FBCSP
+A05,with_visual_cue_early_window,0.3772893772893773,2.0,5.0,285,273,8-30_FBCSP
