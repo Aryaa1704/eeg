@@ -116,6 +116,12 @@ one-vs-rest specificity; F1 is macro F1; and kappa is Cohen's kappa.
 - [Aggregate confusion-matrix image](./results/confusion_matrices_aggregate.png)
 - [Original comparison graph](./results/visual_comparison.png)
 
+#### FBCSP figures
+
+![FBCSP visual-cue comparison](./results/visual_comparison.png)
+
+![Aggregate confusion matrices](./results/confusion_matrices_aggregate.png)
+
 ---
 
 ## Analysis 2: Paper-style sliding-window analysis
@@ -176,6 +182,18 @@ subject's best window.
 - [One-second segment summary](./results/paper_replication/segment_accuracy_summary.csv)
 - [One-second segment graph](./results/paper_replication/segment_accuracy_comparison.png)
 - [T-test table](./results/paper_replication/t_test_table.csv)
+
+#### Paper-style figures
+
+![BCI 2a timing scheme](./results/paper_replication/timing_scheme_2a.png)
+
+![Subject-wise window differences](./results/paper_replication/subject_window_differences.png)
+
+![Mean accuracy by window](./results/paper_replication/mean_accuracy_by_window.png)
+
+![Accuracy difference by window](./results/paper_replication/accuracy_difference_by_window.png)
+
+![One-second segment accuracy comparison](./results/paper_replication/segment_accuracy_comparison.png)
 
 ### Graph interpretation
 
