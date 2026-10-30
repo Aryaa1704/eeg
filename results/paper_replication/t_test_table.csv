@@ -1,0 +1,2 @@
+comparison,baseline_mean_accuracy_percent,best_mean_accuracy_percent,improvement_percent_points,t_statistic,p_value
+Best subject window vs 3.0–6.0 s baseline,37.72963569645428,56.22368093236907,18.49404523591479,5.056657989585654,0.0009811092299546222

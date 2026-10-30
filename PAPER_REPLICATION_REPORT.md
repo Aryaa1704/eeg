@@ -11,6 +11,7 @@ three-second training windows were tested at 0.1-second increments, with the
 - Model: 8–30 Hz band-pass, CSP, LDA with one-vs-one multiclass classification
 - Window starts tested: 2.0–3.5 s
 - Window width: 3 s
+- Window step: 0.1 s
 
 ## Summary
 
@@ -48,6 +49,31 @@ This is a paper-style time-window comparison, not a separate recording with
 visual cues removed. The earlier window is used as the visual-presentation
 condition for comparison.
 
+## Paper-style figures and additional segment analysis
+
+The applicable BCI 2a CSP-LDA figures are available as:
+
+- `timing_scheme_2a.png`: trial timing and sliding-window scheme
+- `subject_window_differences.png`: subject-wise accuracy differences
+- `accuracy_difference_by_window.png`: mean difference from baseline
+- `mean_accuracy_by_window.png`: mean accuracy at each window start
+- `segment_accuracy_comparison.png`: one-second segment comparison
+
+The one-second training-segment means are:
+
+| Training segment | Mean accuracy |
+|---|---:|
+| Visual presentation (2–3 s) | 54.28% |
+| Motor imagery (3–4 s) | 53.54% |
+| Rest (6–7 s) | 17.62% |
+
+`segment_accuracy_summary.csv` and `segment_accuracy.csv` contain the numeric
+values. The paper's CNN architecture figures and BCI 2b figures are not
+recreated because this project uses the BCI 2a CSP-LDA pipeline only. The
+paper's temporal-profile/topography figures are exploratory signal-analysis
+figures, not classification outputs; reproducing them would require electrode
+location metadata that is not available in the current recordings.
+
 ## Included files
 
 - `summary.csv`: overall statistics
@@ -55,3 +81,9 @@ condition for comparison.
 - `all_window_accuracy.csv`: every tested window for every subject
 - `mean_by_window.csv`: mean accuracy and difference for each window start
 - `accuracy_difference_by_window.png`: paper-style accuracy-difference graph
+- `timing_scheme_2a.png`: timing diagram
+- `subject_window_differences.png`: subject-wise difference graph
+- `mean_accuracy_by_window.png`: mean accuracy graph
+- `segment_accuracy_summary.csv`: one-second segment summary
+- `segment_accuracy_comparison.png`: one-second segment graph
+- `t_test_table.csv`: t-test table

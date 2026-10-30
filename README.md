@@ -170,6 +170,12 @@ subject's best window.
 - [All tested windows](./results/paper_replication/all_window_accuracy.csv)
 - [Mean accuracy by window](./results/paper_replication/mean_by_window.csv)
 - [Accuracy-difference graph](./results/paper_replication/accuracy_difference_by_window.png)
+- [Timing scheme](./results/paper_replication/timing_scheme_2a.png)
+- [Subject-wise difference graph](./results/paper_replication/subject_window_differences.png)
+- [Mean accuracy graph](./results/paper_replication/mean_accuracy_by_window.png)
+- [One-second segment summary](./results/paper_replication/segment_accuracy_summary.csv)
+- [One-second segment graph](./results/paper_replication/segment_accuracy_comparison.png)
+- [T-test table](./results/paper_replication/t_test_table.csv)
 
 ### Graph interpretation
 

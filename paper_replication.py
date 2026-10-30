@@ -19,6 +19,11 @@ DATA_DIR = ROOT / "bci_mi_project" / "data" / "BCI_2a"
 OUT_DIR = ROOT / "results" / "paper_replication"
 WINDOW_WIDTH = 3.0
 WINDOW_STARTS = np.round(np.arange(2.0, 3.5 + 0.001, 0.1), 1)
+SEGMENTS = {
+    "visual_presentation_2_3s": (2.0, 3.0),
+    "motor_imagery_3_4s": (3.0, 4.0),
+    "rest_6_7s": (6.0, 7.0),
+}
 
 
 def bandpass(raw):
@@ -77,6 +82,7 @@ def run_subject(subject):
     eval_X, eval_y = eval_X[eval_keep], eval_y[eval_keep]
 
     rows = []
+    segment_rows = []
     for start in WINDOW_STARTS:
         end = round(float(start + WINDOW_WIDTH), 1)
         train_X, train_y = make_epochs(
@@ -101,17 +107,43 @@ def run_subject(subject):
             "train_epochs": int(train_keep.sum()),
             "test_epochs": len(eval_y),
         })
-    return rows
+    for segment, (start, end) in SEGMENTS.items():
+        train_X, train_y = make_epochs(
+            train_raw,
+            train["events"],
+            train["artifact_pos"],
+            start,
+            end,
+        )
+        train_keep = keep_clean(train_X)
+        prediction = fit_predict(
+            train_X[train_keep],
+            train_y[train_keep],
+            eval_X,
+        )
+        segment_rows.append({
+            "subject": subject,
+            "segment": segment,
+            "window_start": start,
+            "window_end": end,
+            "accuracy": float(np.mean(prediction == eval_y)),
+            "accuracy_percent": float(np.mean(prediction == eval_y) * 100),
+        })
+    return rows, segment_rows
 
 
 def main():
     subjects = os.getenv("PAPER_REPLICATION_SUBJECTS", ",".join(SUBJECTS)).split(",")
     rows = []
+    segment_rows = []
     for subject in subjects:
         print(f"[PAPER REPLICATION] {subject}")
-        rows.extend(run_subject(subject))
+        subject_rows, subject_segments = run_subject(subject)
+        rows.extend(subject_rows)
+        segment_rows.extend(subject_segments)
 
     all_windows = pd.DataFrame(rows)
+    segments = pd.DataFrame(segment_rows)
     baseline = all_windows[
         (all_windows["window_start"] == BASELINE_START)
         & (all_windows["window_end"] == BASELINE_END)
@@ -153,6 +185,97 @@ def main():
     )
     mean_by_window["window_end"] = mean_by_window["window_start"] + WINDOW_WIDTH
     mean_by_window.to_csv(OUT_DIR / "mean_by_window.csv", index=False)
+    segments.to_csv(OUT_DIR / "segment_accuracy.csv", index=False)
+    segment_means = segments.groupby("segment", as_index=False)["accuracy"].mean()
+    segment_means["accuracy_percent"] = segment_means["accuracy"] * 100
+    segment_means.to_csv(OUT_DIR / "segment_accuracy_summary.csv", index=False)
+
+    segment_plot, axis = plt.subplots(figsize=(8, 4.5))
+    axis.bar(
+        segment_means["segment"].str.replace("_", " ").str.title(),
+        segment_means["accuracy_percent"],
+        color=["#f5cba7", "#aed6f1", "#d5f5e3"],
+    )
+    axis.axhline(25, color="black", linestyle="--", linewidth=1,
+                 label="Four-class chance level: 25%")
+    axis.set(
+        ylabel="Mean accuracy across nine subjects (%)",
+        title="Accuracy using one-second training segments",
+    )
+    axis.tick_params(axis="x", rotation=15)
+    axis.legend()
+    segment_plot.tight_layout()
+    segment_plot.savefig(OUT_DIR / "segment_accuracy_comparison.png", dpi=180)
+    plt.close(segment_plot)
+
+    timing, axis = plt.subplots(figsize=(10, 2.8))
+    axis.axvspan(2, 3, color="#f9e79f", alpha=0.8, label="Visual presentation")
+    axis.axvspan(3, 6, color="#aed6f1", alpha=0.8, label="Motor imagery")
+    axis.axvspan(6, 6.5, color="#d5f5e3", alpha=0.8, label="Rest")
+    axis.axvline(3, color="#555", linewidth=1)
+    axis.axvline(6, color="#555", linewidth=1)
+    for start in WINDOW_STARTS:
+        axis.plot([start, start + WINDOW_WIDTH], [0.5, 0.5], color="#1f618d", alpha=0.25)
+    axis.plot([2, 5], [0.5, 0.5], color="#154360", linewidth=4, label="Example: 2–5 s")
+    axis.plot([3, 6], [0.25, 0.25], color="#7b241c", linewidth=4, label="Baseline: 3–6 s")
+    axis.set(xlim=(1.8, 6.7), ylim=(0, 1), yticks=[],
+             xlabel="Time after trial cue (s)",
+             title="BCI 2a timing and three-second sliding windows")
+    axis.legend(loc="upper center", bbox_to_anchor=(0.5, -0.22), ncol=3, fontsize=8)
+    timing.tight_layout()
+    timing.savefig(OUT_DIR / "timing_scheme_2a.png", dpi=180, bbox_inches="tight")
+    plt.close(timing)
+
+    subject_plot, axis = plt.subplots(figsize=(9, 5))
+    for subject, group in all_windows.groupby("subject"):
+        axis.plot(
+            group["window_start"],
+            group["difference_percent_points"],
+            marker="o",
+            markersize=3,
+            linewidth=1,
+            alpha=0.75,
+            label=subject,
+        )
+    axis.axhline(0, color="black", linewidth=0.8)
+    axis.set(
+        xlabel="Training window start (s)",
+        ylabel="Accuracy difference from 3.0–6.0 baseline (percentage points)",
+        title="Subject-wise CSP-LDA sliding-window differences",
+    )
+    axis.legend(ncol=3, fontsize=8)
+    subject_plot.tight_layout()
+    subject_plot.savefig(OUT_DIR / "subject_window_differences.png", dpi=180)
+    plt.close(subject_plot)
+
+    mean_accuracy, axis = plt.subplots(figsize=(8, 4.5))
+    axis.plot(
+        mean_by_window["window_start"],
+        mean_by_window["mean_accuracy"] * 100,
+        marker="o",
+        color="#1f618d",
+    )
+    axis.axhline(baseline_values.mean() * 100, color="#7b241c",
+                 linestyle="--", label="Baseline mean: 3–6 s")
+    axis.set(
+        xlabel="Training window start (s)",
+        ylabel="Mean accuracy across nine subjects (%)",
+        title="Mean CSP-LDA accuracy across sliding windows",
+    )
+    axis.legend()
+    mean_accuracy.tight_layout()
+    mean_accuracy.savefig(OUT_DIR / "mean_accuracy_by_window.png", dpi=180)
+    plt.close(mean_accuracy)
+
+    table = pd.DataFrame([{
+        "comparison": "Best subject window vs 3.0–6.0 s baseline",
+        "baseline_mean_accuracy_percent": baseline_values.mean() * 100,
+        "best_mean_accuracy_percent": best_values.mean() * 100,
+        "improvement_percent_points": (best_values - baseline_values).mean() * 100,
+        "t_statistic": t_stat,
+        "p_value": p_value,
+    }])
+    table.to_csv(OUT_DIR / "t_test_table.csv", index=False)
 
     figure, axis = plt.subplots(figsize=(8, 4.5))
     axis.plot(
